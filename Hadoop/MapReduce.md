@@ -15,7 +15,7 @@
   - 作业完成  
 ### MapReduce数据流 ###
    文件>InputFormat>InputSplit>RecordReader>Mapper>Shuffle>Reducer>OutPutFormat>。  
-   输入文件可以是HDFS中任意类型的文件，例如SequenceFile, Line-based File(是否以tab分割)。InputFormat会读取文件中的内容并将文件内容划分为InputSplit，每个InputSplit对应一个Mapper。InputSplit之后对应的RecordReader，他会将InputSplit中的数据转化为kv对。之后这些kv pair会被发送给Mapper进一步处理并生成intermediate kv pair，一个重要的区别是intermediate kv pair的value可能是一个list….
+   输入文件可以是HDFS中任意类型的文件，例如SequenceFile, Line-based File(是否以tab分割)。InputFormat会读取文件中的内容并将文件内容划分为InputSplit，每个InputSplit对应一个Mapper。InputSplit之后对应的RecordReader，他会将InputSplit中的数据转化为kv对。之后这些kv pair会被发送给Mapper进一步处理并生成intermediate kv pair，一个重要的区别是intermediate kv pair的value可能是一个list
    1. **InputFormat阶段** 描述了如何读入输入文件和如何对文件进行分片。Mapper获取数据的函数有getsplits()和createRecordReader()。为了处理HDFS中多种类型的文件，有多种类型的inputformat可以被调用：               
     - FileInputFormat会指定一个包含多个文件的输入文件夹，等mapreduce job开始执行的时候，FileInputFormat就会根据这个路径去读取文件夹下所有的文件。  
     - TextInputFormat:按行读取文件中的内容，这是默认的方法，它会将数据读为kv pair，k是行首的字节偏置量，v是具体的line content。  
