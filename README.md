@@ -2,7 +2,7 @@
 
 | &nbsp;算法| 操作系统 |计算机网络&nbsp;|分布式| &nbsp;&nbsp;数据库&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;C++&nbsp;&nbsp;&nbsp;|Hadoop| &nbsp;&nbsp;&nbsp;Spark&nbsp;&nbsp;&nbsp; |后端| &nbsp;&nbsp;数仓&nbsp;&nbsp;&nbsp; |
 | :---: | :----: | :---: | :----: | :----: | :----: | :----: | :----: | :----: | :----: |
-| [<img src="Icons/alg.png" width="40px">](#面试算法) | [<img src="Icons/operationSys.png" width="50px">](#操作系统) | [<img src="Icons/network.png" width="40px">](#cloud-网络) | [<img src="Icons/distribute.png" width="40px">](#分布式) | [<img src="Icons/db.png" width="40px">](#数据库) |[<img src="Icons/cpp.png" width="30px">](#C++)| [<img src="Icons/hadoop.png" width="40px">](#Hadoop) |[<img src="Icons/spark.png" width="70px">](#Spark)| [<img src="Icons/server.png" width="40px">](#后端) |[<img src="Icons/wareHouse.png" width="40px">](#数仓)|
+| [<img src="Icons/alg.png" width="40px">](#alg) | [<img src="Icons/operationSys.png" width="50px">](#操作系统) | [<img src="Icons/network.png" width="40px">](#cloud-网络) | [<img src="Icons/distribute.png" width="40px">](#分布式) | [<img src="Icons/db.png" width="40px">](#数据库) |[<img src="Icons/cpp.png" width="30px">](#C++)| [<img src="Icons/hadoop.png" width="40px">](#Hadoop) |[<img src="Icons/spark.png" width="70px">](#Spark)| [<img src="Icons/server.png" width="40px">](#后端) |[<img src="Icons/wareHouse.png" width="40px">](#数仓)|
 
 <br>
 
@@ -41,7 +41,7 @@
 - [排序算法]()
 ## <img src="Icons/cpp.png" width="30px"> C++
 
-###书籍
+### 书籍
 - C++ Primer
 - C和C++程序员面试宝典
 - 深度探索C++对象模型
