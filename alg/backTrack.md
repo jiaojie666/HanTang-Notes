@@ -6,7 +6,7 @@
 
 	<br>
 
-	-	**组合问题：每个元素可以重复选取，但应该整体无重**
+-**组合问题：每个元素可以重复选取，但应该整体无重**
 
 
 
@@ -24,7 +24,7 @@
 		    this->candidates = candidates;
 		    DFS(0, target);
 		return res;
-	-	**组合问题只能使用一次**
+-	**组合问题只能使用一次**
 
 
 
@@ -57,7 +57,7 @@
 			swap(nums[start],nums[i]);
 			permute(nums,start+1);
 			swap(nums[start],nums[i]);
-	-	**全排列：有重复**
+-	**全排列：有重复**
 
 
 
@@ -71,7 +71,7 @@
 
 
 
-	-	**子集问题：无重复**
+-	**子集问题：无重复**
 
 
 		vector<vector<int>> subsets(vector<int>& nums) {
@@ -83,7 +83,7 @@
 			temp.push_back(nums[i]);
 			helper(nums,i+1,temp);
 			temp.pop_back();
-	-	**子集问题有重复**
+-	**子集问题有重复**
 
 
 
@@ -101,7 +101,7 @@
 			temp.push_back(nums[i]);
 			dfs(temp,i+1,nums);
 			temp.pop_back();
-	-	**N皇后问题**
+-	**N皇后问题**
 
 
 
@@ -122,7 +122,7 @@
 			    data[cur][i]='Q';
 			    solveNQueens(data,cur+1,n);
 			    data[cur][i]='.';
-	-	**分割回文串**
+-	**分割回文串**
 
 
 
@@ -141,7 +141,7 @@
 			    temp.push_back(s.substr(start,i-start+1));
 			    compute(s,i+1,temp);
 			    temp.pop_back();
-	-	**字母大小写全排列**
+-	**字母大小写全排列**
 
 
 
