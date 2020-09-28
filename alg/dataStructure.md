@@ -90,9 +90,7 @@
 			return node;
 		    }
 		};
-	- **矩阵打印问题**
-
-
+- **矩阵打印问题**
 
 		while(left<=right&&top<=down)
 		    for(int col=left;col<=right;col++)
@@ -105,9 +103,7 @@
 			for(int row=down;row>top;row--)
 			    res.push_back(matrix[row][left]);
 		    left++;right--;top++;down--;
-	-	跳跃表
-
-
+-	**跳跃表**
 
 		class SkipList{
 		private:
@@ -213,9 +209,7 @@
 			else
 				x->pre->next=x->next;
 				x->next->pre=x->pre;
-	-	**前缀树**
-
-
+-	**前缀树**
 
 		class Trie {
 		public:
@@ -262,9 +256,7 @@
 		    bool is_string=false;
 		    Trie *next[26]={nullptr};
 		};
-	-	**二叉树操作**
-
-
+-	**二叉树操作**
 
 		查找：
 		boolean isInBST(TreeNode root, int target) {
