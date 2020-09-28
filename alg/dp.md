@@ -8,22 +8,20 @@
 
 -	<b>最长回文子串：动态规划算法</b>
 
-
-
-	string longestPalindrome(string s) 
-	    int n = s.size();
-	    vector<vector<int>> dp(n, vector<int>(n));string ans;
-	    for (int l = 0; l < n; ++l)
-	        for (int i = 0; i + l < n; ++i)
-	            int j = i + l;
-	            if (l == 0) 
-	                dp[i][j] = 1;
-	            else if (l == 1) 
-	                dp[i][j] = (s[i] == s[j]);
-	            else 
-	                dp[i][j] = (s[i] == s[j] && dp[i + 1][j - 1]);
-	            if (dp[i][j] && l + 1 > ans.size()) {
-	                ans = s.substr(i, l + 1);
+		string longestPalindrome(string s) 
+		    int n = s.size();
+		    vector<vector<int>> dp(n, vector<int>(n));string ans;
+		    for (int l = 0; l < n; ++l)
+			for (int i = 0; i + l < n; ++i)
+			    int j = i + l;
+			    if (l == 0) 
+				dp[i][j] = 1;
+			    else if (l == 1) 
+				dp[i][j] = (s[i] == s[j]);
+			    else 
+				dp[i][j] = (s[i] == s[j] && dp[i + 1][j - 1]);
+			    if (dp[i][j] && l + 1 > ans.size()) {
+				ans = s.substr(i, l + 1);
 
 
 
@@ -31,18 +29,18 @@
 -	**最长回文子串:中心扩展法**
 
 
-	string longestPalindrome(string s)
-	    string m="";
-	    for(int i=0;i<s.size();i++)
-	        string s1=palindrome(s,i,i);
-	        string s2=palindrome(s,i,i+1);
-	        string max=s1.size()>s2.size()?s1:s2;
-	        m=max.size()>m.size()?max:m;
-	    return m;
-	string palindrome(string s,int left,int right)
-	    while(left>=0&&right<s.size()&&s[left]==s[right])
-	        left--;right++;
-	    return s.substr(left+1,right-left-1);
+		string longestPalindrome(string s)
+		    string m="";
+		    for(int i=0;i<s.size();i++)
+			string s1=palindrome(s,i,i);
+			string s2=palindrome(s,i,i+1);
+			string max=s1.size()>s2.size()?s1:s2;
+			m=max.size()>m.size()?max:m;
+		    return m;
+		string palindrome(string s,int left,int right)
+		    while(left>=0&&right<s.size()&&s[left]==s[right])
+			left--;right++;
+		    return s.substr(left+1,right-left-1);
 -	**正则表达式：递归**
 
 
@@ -61,21 +59,21 @@
 
 
 
-	dp[0][0]=true;//means [0,i], [0,j] match case
-	for(int i=1;i<=s.size();i++)
-	    dp[i][0]=false;
-	for(int j=1;j<=p.size();j++)
-	    dp[0][j]=p[j-1]=='*'?dp[0][j-2]:false;
-	for(int i=1;i<=s.size();i++){
-	    for(int j=1;j<=p.size();j++)
-	    if(p[j-1]=='*'&&j>=2){
-	        if(p[j-2]==s[i-1]||p[j-2]=='.')
-	            dp[i][j]=dp[i-1][j]||dp[i][j-2];
-	        else
-	            dp[i][j]=dp[i][j-2];
-	    else
-	        if(p[j-1]==s[i-1]||p[j-1]=='.')
-	            dp[i][j]=dp[i-1][j-1];
+		dp[0][0]=true;//means [0,i], [0,j] match case
+		for(int i=1;i<=s.size();i++)
+		    dp[i][0]=false;
+		for(int j=1;j<=p.size();j++)
+		    dp[0][j]=p[j-1]=='*'?dp[0][j-2]:false;
+		for(int i=1;i<=s.size();i++){
+		    for(int j=1;j<=p.size();j++)
+		    if(p[j-1]=='*'&&j>=2){
+			if(p[j-2]==s[i-1]||p[j-2]=='.')
+			    dp[i][j]=dp[i-1][j]||dp[i][j-2];
+			else
+			    dp[i][j]=dp[i][j-2];
+		    else
+			if(p[j-1]==s[i-1]||p[j-1]=='.')
+			    dp[i][j]=dp[i-1][j-1];
         
 -	**通配符匹配 **
 
