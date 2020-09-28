@@ -73,11 +73,11 @@ d)	聚合操作中，数据集中的数据分布不均匀：将原本相同的ke
 避免创建重复的RDD，尽可能复用RDD，对经常使用的RDD要进行持久化，尽量少的使用Shuffle类算子，使用mapSide预聚合的shuffle操作。
 使用高性能的算子：使用reduceByKey/aggregateByKey替代groupByKey:map-size;使用mapPartitions代替map，使用foreachPartitions代替foreach；使用filter+coalesce操作，对分区进行压缩；如果要在repartition之后还要进行排序直接使用repartitionAndSortWithinPartitions
 23. **Spark资源调优：**
-num-executors：应用运行时executor的数量，推荐50-100左右比较合适
-executor-memory：应用运行时executor的内存，推荐4-8G比较合适
-executor-cores：应用运行时executor的CPU核数，推荐2-4个比较合适
-driver-memory：应用运行时driver的内存量，主要考虑如果使用map side join或者一些类似于collect的操作，那么要相应调大内存量
-spark.default.parallelism：每个stage默认的task数量，推荐参数为num-executors * executor-cores的2~3倍较为合适
-spark.storage.memoryFraction：每一个executor中用于RDD缓存的内存比例，如果程序中有大量的数据缓存，可以考虑调大整个的比例，默认为60%
-spark.shuffle.memoryFraction：每一个executor中用于Shuffle操作的内存比例，默认是20%，如果程序中有大量的Shuffle类算子，那么可以考虑其它的比例
++ num-executors：应用运行时executor的数量，推荐50-100左右比较合适
++ executor-memory：应用运行时executor的内存，推荐4-8G比较合适
++ executor-cores：应用运行时executor的CPU核数，推荐2-4个比较合适
++ driver-memory：应用运行时driver的内存量，主要考虑如果使用map side join或者一些类似于collect的操作，那么要相应调大内存量
++ spark.default.parallelism：每个stage默认的task数量，推荐参数为num-executors * executor-cores的2~3倍较为合适
++ spark.storage.memoryFraction：每一个executor中用于RDD缓存的内存比例，如果程序中有大量的数据缓存，可以考虑调大整个的比例，默认为60%
++ spark.shuffle.memoryFraction：每一个executor中用于Shuffle操作的内存比例，默认是20%，如果程序中有大量的Shuffle类算子，那么可以考虑其它的比例
 
