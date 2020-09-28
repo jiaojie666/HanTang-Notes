@@ -24,7 +24,8 @@ Application Master的主要功能是:
 + 把获得的资源进一步分配给内部的map和reduce任务，实现资源的二次分配。与Node manager保持交互通信进行应用程序的启动，运行，监控和停止。监控资源的使用情况，并在任务失败的时候执行失败恢复。定期向Resource Manager发送心跳消息报告资源使用情况和应用进度。当作业完成则向resource manager注销容器。
 5. **Node Manager:** 
 容器生命周期管理，监控容器资源使用情况，跟踪结点健康状况，用心跳的方式和Resource manager保持通信等。特殊注意的是Node manager只负责管理抽象的容器，只处理与容器相关的事情而不具体负责每个人物自身状态的管理，这些管理工作由application master负责。
-6. **Yarn的工作流程：**用户编写客户端应用程序，向YARN提交应用程序，提交的内容包括Application Master程序，启动的命令和用户程序等。Resource Manager负责接收和处理来自客户端的请求并为程序分配容器，在容器中启动application master。Application master被创建后会首先向resource manager进行注册。Application master会使用轮询的方法想Resource manager申请资源。Resource manager则以容器的形式将资源分配给application master。在容器中整整的启动任务。各个任务向application master汇报自己的状态和进度。应用程序完成后，application master会向Resource manager的应用程序管理器注销并关闭自己。
+6. **Yarn的工作流程：**
+用户编写客户端应用程序，向YARN提交应用程序，提交的内容包括Application Master程序，启动的命令和用户程序等。Resource Manager负责接收和处理来自客户端的请求并为程序分配容器，在容器中启动application master。Application master被创建后会首先向resource manager进行注册。Application master会使用轮询的方法想Resource manager申请资源。Resource manager则以容器的形式将资源分配给application master。在容器中整整的启动任务。各个任务向application master汇报自己的状态和进度。应用程序完成后，application master会向Resource manager的应用程序管理器注销并关闭自己。
 7. **Yarn对比mapreduce1.0:** 
 大大减少了resouce manger的资源消耗。Application Master来完成需要大量资源消耗的任务调度和监控。多个作业对应多个application master,实现监控分布化。Mapreduce同时是计算框架又是调度框架，他只能支持mapreduce计算。但是yarn是一个纯粹的资源调度管理框架，它上面可以运行包括mapreduce在内的不同类型的计算框架，只要编程实现对应的application master。Yarn更高效，并且以容器为单位而不是slot。
 Yarn的HA如何实现：通过引入冗余的Resource manager来解决单点故障问题。
