@@ -28,12 +28,20 @@ MapReduce中需要将中间结果写入磁盘或者hdfs会造成大量的IO开�
 他们最大的区别是cache将RDD存储到内存中，而checkPoint是将RDD存储到disk中，一般是HDFS.cache的RDD以及相对应的computing chain会被记住，所以如果出错的话可以通过重新计算来获得这部分数据。然而checkPoint不会存储Computing Chain，它通过HDFS的复制方法来实现fault tolerance。
 RDD.Persist和checkPoint也是有区别的：前者虽然也是把RDD持久化到磁盘，但是对应partition会被blockManager管理。一旦driver Program结束，blockManager也会执行结束，也就是说对应persist的RDD也会被删除掉。但是CheckPoint则不会。
 9. **Spark的部署模式及特点**
-(1)本地模式，spark应用会以多线程的方式直接运行在本地，一般都是为了方便调试，本地模式有三种种类，local代表只启动一个Executor，local[k]，代表启动k个executor，local[*]代表启动跟CPU数目相同的executor。(2)standalone模式：分布式部署集群，自带完整的服务，资源管理和任务监控都是spark自己做，是基础模式(3)Spark on Yarn：分布式部署集群，资源和任务监控交给yarn管理，但是目前仅支持粗粒度资源分配方式，包含cluster和client运行模式，其中cluster适合生产，driver运行在集群子节点上，具备容错功能，而client模式适合调试，driver运行在客户端(4)Spark on Mesos:有两种运行模式，即粗粒度模式和细粒度模式，粗粒度模式由一个driver和若干个executor组成，其中每个Executor都要占用若干资源，内部可运行多个task。应用程序在正式运行之前，需要将运行环境中的资源全部申请好，并且运行期间一直占用资源，直至程序运行结束才会释放资源。细粒度模式则比较智能，能够按需分配。
+- 本地模式，spark应用会以多线程的方式直接运行在本地，一般都是为了方便调试，本地模式有三种种类，local代表只启动一个Executor，local[k]，代表启动k个executor，local[*]代表启动跟CPU数目相同的executor。
+- standalone模式：分布式部署集群，自带完整的服务，资源管理和任务监控都是spark自己做，是基础模式
+- Spark on Yarn：分布式部署集群，资源和任务监控交给yarn管理，但是目前仅支持粗粒度资源分配方式，包含cluster和client运行模式，其中cluster适合生产，driver运行在集群子节点上，具备容错功能，而client模式适合调试，driver运行在客户端
+- Spark on Mesos:有两种运行模式，即粗粒度模式和细粒度模式，粗粒度模式由一个driver和若干个executor组成，其中每个Executor都要占用若干资源，内部可运行多个task。应用程序在正式运行之前，需要将运行环境中的资源全部申请好，并且运行期间一直占用资源，直至程序运行结束才会释放资源。细粒度模式则比较智能，能够按需分配。
 
 10. **Driver的功能：**
 Spark运行的时候包括一个driver进程也是作业的主进程，具备main函数，并且由sparkContext实例，是程序的入口点，它负责向集群申请资源，向master注册信息，负责作业调度，作业解析，生成Stage并调度task到Executor。
 Worker的作用：管理当前节点内存，cpu的使用情况，接收master传来的资源指令，管理分配新进程，做计算的服务。
-Spark工作机制，运行流程：(1)构建一个Application的运行环境，driver创建一个SparkContext(2)SparkContext向资源管理器(Mesos,Yarn)申请Executor资源，资源管理器分配并启动Executor.(3)Executor向SparkContext申请Task(4)SparkContext将应用程序发送给Executor(5)SparkContext构建DAG图，之后DAGScheduler将DAG图解析为多个Stage,每个stage包含多个task，将taskset发送给TaskScheduler，由taskSchedule将Task发送给Executor运行(5)executor运行Task,结束后释放资源。
+Spark工作机制，运行流程：
+* 构建一个Application的运行环境，driver创建一个SparkContext
+* SparkContext向资源管理器(Mesos,Yarn)申请Executor资源，资源管理器分配并启动Executor.
+* Executor向SparkContext申请Task
+* SparkContext将应用程序发送给Executor
+* SparkContext构建DAG图，之后DAGScheduler将DAG图解析为多个Stage,每个stage包含多个task，将taskset发送给TaskScheduler，由taskSchedule将Task发送给Executor运行(5)executor运行Task,结束后释放资源。
 11. **RDD的弹性与缺陷：**
 可以设置为内存存储，或者灵活的内存+磁盘存储；基于lineage的高效容错机制；如果Task或者Stage失败会自动进行特定次数的重试操作；可以进行checkPoint和persist持久化操作；数据分片的高度弹性。缺陷是读操作可以是粗粒度细粒度都可，但写操作都是粗粒度的。即批量写入数据。
 12. **Spark数据本地性的表现：**
@@ -53,22 +61,22 @@ spark.executor.memory代表每个Executor可用的内存，而Spark.storage.memo
 19. **为了application在没有获得足够资源的情况下job就开始执行了：**应该是task的调度线程和Executor资源申请是异步的导致的，这可能会导致执行该job时资源一直不足。为了避免这个问题可以适当调整  spark.scheduler.maxRegisteredResourcesWaitingTime和 spark.scheduler.minRegisteredResourcesRatio两个参数。
 20. **Spark调优部分：**
 参数调优：
-(1)-spark.shuffle.file.beffer默认值32kb，该参数值白用来设置shuffle writer task的bufferedOutputStream的buffer缓冲大小，在将数据spill到磁盘之前会先写入buffer缓冲之中，因此如果作业可用内存资源比较充足，可以适当调大这个参数，从而减少spill次数。
-(2)spark.reducer.maxSizeInFlight默认值48mb，它决定了shuffle read task的buffer缓冲大小，这个buffer缓冲决定了每次http拉取多少数据
-(3)spark.shuffle.io.maxRetries默认值3，它代表shuffle read如果因为网络失败，自动重试的次数。超过次数则会失败，适当调大提升稳定性
-(4)spark.shuffle.io.retryWait默认值5s，这个参数表明shuffle read拉取数据失败后，距离下一次去拉取数据的时间间隔
-(5)spark.shuffle.memoryFraction默认值0.2，这个参数代表Executor内存中，分配给shuffle read task进行局和操作的内存比例
-(6) spark.shuffle.manager：Hash和Sort方式，Sort是默认，Hash在reduce数量 比较少的时候，效率会很高。
-(7)spark.shuffle.sort. bypassMergeThreshold：设置的是Sort方式中，启用Hash输出方式的临界值，如果你的程序数据不需要排序，而且reduce数量比较少，那推荐可以适当增大临界值。
-(8)spark. shuffle.cosolidateFiles：如果你使用Hash shuffle方式，推荐打开该配置，实现更少的文件输出。
++ -spark.shuffle.file.beffer默认值32kb，该参数值白用来设置shuffle writer task的bufferedOutputStream的buffer缓冲大小，在将数据spill到磁盘之前会先写入buffer缓冲之中，因此如果作业可用内存资源比较充足，可以适当调大这个参数，从而减少spill次数。
++ spark.reducer.maxSizeInFlight默认值48mb，它决定了shuffle read task的buffer缓冲大小，这个buffer缓冲决定了每次http拉取多少数据
++ spark.shuffle.io.maxRetries默认值3，它代表shuffle read如果因为网络失败，自动重试的次数。超过次数则会失败，适当调大提升稳定性
++ spark.shuffle.io.retryWait默认值5s，这个参数表明shuffle read拉取数据失败后，距离下一次去拉取数据的时间间隔
++ spark.shuffle.memoryFraction默认值0.2，这个参数代表Executor内存中，分配给shuffle read task进行局和操作的内存比例
++ spark.shuffle.manager：Hash和Sort方式，Sort是默认，Hash在reduce数量 比较少的时候，效率会很高。
++ spark.shuffle.sort. bypassMergeThreshold：设置的是Sort方式中，启用Hash输出方式的临界值，如果你的程序数据不需要排序，而且reduce数量比较少，那推荐可以适当增大临界值。
++ spark. shuffle.cosolidateFiles：如果你使用Hash shuffle方式，推荐打开该配置，实现更少的文件输出。
 21. **数据倾斜：**
-(1)	什么是数据倾斜会导致什么后果：并行处理的数据集中某个partition的数据显著多于其他部分，这部分就成为性能瓶颈。它最容易导致的后果就是oom。
-(2)	如何定位：一般来说是因为shuffle导致的数据倾斜，一般来说可以通过查看任务，查看那Stage，查看代码来定位
-(3)	经常出现的情况以及对应的解决办法：
-a)	数据分布不均匀，spark频繁交互：提前进行数据预处理，在进行kafka数据分发的时候尽可能平均分配，它从根源上解决数据倾斜，彻底避免执行shuffle类算子，那么肯定就不会有数据倾斜问题。
-b)	数据集中不同的key由于分区方式，导致数据倾斜：增加shuffle read task数量，让原本分给一个Task的多个key分配给多个task,从而让每个task处理更少的数据。或者自己从新定义partitioner方法
-c)	Join操作中一个数据集的数据分布不均匀，另一个数据集比较小：将reduce join转移为map join，当join操作其中的一个RDD或者表的数据量比较小的时候适用这个方案。通过广播小RDD全量数据+map算子来实现mapjoin避免Shuffle操作。
-d)	聚合操作中，数据集中的数据分布不均匀：将原本相同的key+随机前缀的方式变成不同的key，之后就可以把原本一个Task要做的任务分散给多个task去做局部聚合，最后去掉随机前缀进行一次全局聚合即可。
++ 什么是数据倾斜会导致什么后果：并行处理的数据集中某个partition的数据显著多于其他部分，这部分就成为性能瓶颈。它最容易导致的后果就是oom。
++ 如何定位：一般来说是因为shuffle导致的数据倾斜，一般来说可以通过查看任务，查看那Stage，查看代码来定位
++ 经常出现的情况以及对应的解决办法：
+   +	数据分布不均匀，spark频繁交互：提前进行数据预处理，在进行kafka数据分发的时候尽可能平均分配，它从根源上解决数据倾斜，彻底避免执行shuffle类算子，那么肯定就不会有数据倾斜问题。
+   +	数据集中不同的key由于分区方式，导致数据倾斜：增加shuffle read task数量，让原本分给一个Task的多个key分配给多个task,从而让每个task处理更少的数据。或者自己从新定义partitioner方法 
+   +Join操作中一个数据集的数据分布不均匀，另一个数据集比较小：将reduce join转移为map join，当join操作其中的一个RDD或者表的数据量比较小的时候适用这个方案。通过广播小RDD全量数据+map算子来实现mapjoin避免Shuffle操作。
+    +聚合操作中，数据集中的数据分布不均匀：将原本相同的key+随机前缀的方式变成不同的key，之后就可以把原本一个Task要做的任务分散给多个task去做局部聚合，最后去掉随机前缀进行一次全局聚合即可。
 22. **Spark程序调优：**
 避免创建重复的RDD，尽可能复用RDD，对经常使用的RDD要进行持久化，尽量少的使用Shuffle类算子，使用mapSide预聚合的shuffle操作。
 使用高性能的算子：使用reduceByKey/aggregateByKey替代groupByKey:map-size;使用mapPartitions代替map，使用foreachPartitions代替foreach；使用filter+coalesce操作，对分区进行压缩；如果要在repartition之后还要进行排序直接使用repartitionAndSortWithinPartitions
