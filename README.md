@@ -2,7 +2,7 @@
 
 | &nbsp;算法| 操作系统 |计算机网络&nbsp;|分布式| &nbsp;&nbsp;数据库&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;C++&nbsp;&nbsp;&nbsp;|Hadoop| &nbsp;&nbsp;&nbsp;Spark&nbsp;&nbsp;&nbsp; |后端| &nbsp;&nbsp;数仓&nbsp;&nbsp;&nbsp; |
 | :---: | :----: | :---: | :----: | :----: | :----: | :----: | :----: | :----: | :----: |
-| [<img src="Icons/alg.png" width="40px">](#alg) | [<img src="Icons/operationSys.png" width="50px">](#操作系统) | [<img src="Icons/network.png" width="40px">](#cloud-网络) | [<img src="Icons/distribute.png" width="40px">](#分布式) | [<img src="Icons/db.png" width="40px">](#数据库) |[<img src="Icons/cpp.png" width="30px">](#C++)| [<img src="Icons/hadoop.png" width="40px">](#Hadoop) |[<img src="Icons/spark.png" width="70px">](#Spark)| [<img src="Icons/server.png" width="40px">](#后端) |[<img src="Icons/wareHouse.png" width="40px">](#数仓)|
+| [<img src="Icons/alg.png" width="40px">](#alg) | [<img src="Icons/operationSys.png" width="50px">](#operation) | [<img src="Icons/network.png" width="40px">](#network) | [<img src="Icons/distribute.png" width="40px">](#dis) | [<img src="Icons/db.png" width="40px">](#db) |[<img src="Icons/cpp.png" width="30px">](#cpp)| [<img src="Icons/hadoop.png" width="40px">](#hadoop) |[<img src="Icons/spark.png" width="70px">](#spark)| [<img src="Icons/server.png" width="40px">](#server) |[<img src="Icons/wareHouse.png" width="40px">](#ware)|
 
 <br>
 
@@ -39,7 +39,7 @@
 - [C++库函数]()
 - [常见数据结构]()
 - [排序算法]()
-## <img src="Icons/cpp.png" width="30px"> C++
+## <img src="Icons/cpp.png" width="30px"> <span id="cpp">C++</span>
 
 ### 书籍
 - C++ Primer
@@ -56,7 +56,7 @@
 ### 高频面经
 - [点这里]()
 
-## <img src="Icons/operationSys.png" width="50px"> 操作系统
+## <img src="Icons/operationSys.png" width="50px"> <span id="operation">操作系统</span>
 
 ### 书籍
 - 鸟哥的私房菜
@@ -66,7 +66,7 @@
 ### 高频面经
 - [在这里]()
 
-## <img src="Icons/network.png" width="40px"> 计算机网络 
+## <img src="Icons/network.png" width="40px"> <span id="network">计算机网络</span>
 
 ### 书籍
 - 图解Http
@@ -78,11 +78,11 @@
 ### 高频面经
 - [在这里]()
 
-## <img src="Icons/distribute.png" width="40px"> 分布式系统
+## <img src="Icons/distribute.png" width="40px"> <span id="dis">分布式系统理论</span>
 
 -[高频面经]()
 
-## <img src="Icons/db.png" width="40px"> 数据库
+## <img src="Icons/db.png" width="40px"> <span id="db">数据库</span>
 
 ### 书籍
 - MySQL技术内幕(Innodb)
@@ -96,14 +96,14 @@
 - [Redies]()
 - [LevelDB]()
 
-## <img src="Icons/hadoop.png" width="40px"> Hadoop
+## <img src="Icons/hadoop.png" width="40px"> <span id="hadoop">Hadoop</span>
 
 ###高频面经
 - [MapReduce]()
 - [Yarn]()
 - [HDFS]()
 
-## <img src="Icons/spark.png" width="70px"> Spark
+## <img src="Icons/spark.png" width="70px"> <span id="spark">Spark</span>
 
 ### 书籍
 - SparkInternals
@@ -119,7 +119,7 @@
 - [Zookeeper]()
 - [Spark]()
 
-## <img src="Icons/server.png" width="70px"> 后端
+## <img src="Icons/server.png" width="70px"> <span id="server">服务端</span>
 
 ### 书籍
 - Linux高性能服务器编程
@@ -130,7 +130,7 @@
 ### 高频面经
 - [这里]()
 
-## <img src="Icons/wareHouse.png" width="70px"> 数仓
+## <img src="Icons/wareHouse.png" width="70px"> <span id="ware">数据仓库</span>
 
 ### 书籍
 - 数据仓库原理与实践
