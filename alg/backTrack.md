@@ -1,12 +1,12 @@
-	<br>
+<br>
 
-	<div align="center">
-	    <img src="logo.jpg" width="200px">
-	</div>
+<div align="center">
+    <img src="logo.jpg" width="200px">
+</div>
 
-	<br>
+<br>
 
--**组合问题：每个元素可以重复选取，但应该整体无重**
+- **组合问题：每个元素可以重复选取，但应该整体无重**
 
 
 
