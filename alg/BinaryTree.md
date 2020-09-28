@@ -9,19 +9,19 @@
 -	**二叉树前序中序非递归序列**
 
 
-	vector<int> inorderTraversal(TreeNode* root) {
-	    if(root==NULL)
-	        return {};
-	    TreeNode *p=root;
-	    stack<TreeNode*> s;
-	    while(p!=NULL||!s.empty())
-	        while(p!=NULL)
-	            s.push(p);p=p->left;
-	        if(!s.empty())
-	            p=s.top();
-	            res.push_back(p->val);
-	            s.pop();p=p->right;
-	return res;
+		vector<int> inorderTraversal(TreeNode* root) {
+		    if(root==NULL)
+			return {};
+		    TreeNode *p=root;
+		    stack<TreeNode*> s;
+		    while(p!=NULL||!s.empty())
+			while(p!=NULL)
+			    s.push(p);p=p->left;
+			if(!s.empty())
+			    p=s.top();
+			    res.push_back(p->val);
+			    s.pop();p=p->right;
+		return res;
 -	**二叉树后续遍历序列**
 
 
