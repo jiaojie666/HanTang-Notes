@@ -16,15 +16,15 @@
 ### MapReduce数据流 ###
    文件>InputFormat>InputSplit>RecordReader>Mapper>Shuffle>Reducer>OutPutFormat>。  
    输入文件可以是HDFS中任意类型的文件，例如SequenceFile, Line-based File(是否以tab分割)。InputFormat会读取文件中的内容并将文件内容划分为InputSplit，每个InputSplit对应一个Mapper。InputSplit之后对应的RecordReader，他会将InputSplit中的数据转化为kv对。之后这些kv pair会被发送给Mapper进一步处理并生成intermediate kv pair，一个重要的区别是intermediate kv pair的value可能是一个list
-   1. **InputFormat阶段** 描述了如何读入输入文件和如何对文件进行分片。Mapper获取数据的函数有getsplits()和createRecordReader()。为了处理HDFS中多种类型的文件，有多种类型的inputformat可以被调用：               
+   **InputFormat阶段** 描述了如何读入输入文件和如何对文件进行分片。Mapper获取数据的函数有getsplits()和createRecordReader()。为了处理HDFS中多种类型的文件，有多种类型的inputformat可以被调用：               
     - FileInputFormat会指定一个包含多个文件的输入文件夹，等mapreduce job开始执行的时候，FileInputFormat就会根据这个路径去读取文件夹下所有的文件。  
     - TextInputFormat:按行读取文件中的内容，这是默认的方法，它会将数据读为kv pair，k是行首的字节偏置量，v是具体的line content。  
     - keyValueTextInputFormat也是按行读取文件但是它每行的数据会以tab分割，tab前为key,后为value。  
     - SequenceFileInputFormat包含序列化和反序列化方法可以读取二进制的kv pair。与之相似的还有SequenceFileAsTextInputFormat，它包含tostring方法能将keyvalue映射为Text内容。还有SequenceFileAsBinaryInputFormat方法。最后还有NLineInputFormat和DBInputFormat可以从关系数据库。
-    2. **InputSplit：** 是mapreduce中数据的逻辑表示形式，每个inputsplit会对应一个mapper，由于mapreduce具有data locility优化方法，因此task tracker常常将mapper就近放在所用数据周围。这个会有一个贪心的策略，就是尽可能优先处理更大的inputSplit，即保持mapper和data在同一个Datanode上,以获得更高的性能。要注意的是inputsplit并不是真的保存了数据，他只是数据的引用。通常来说InputFormat会根据HDFS分块的大小来将inputFile分割为input split。
-    3. **RecordReader：** 会将inputSplit中的数据convert成便于mapper处理的k,v结构。关键函数有setup(contex),context.nextKeyValue()等，常用的RecordReader有LineRecordReader和SequenceFileRecordread。
-    4. **Partitioner:** partitions的数量取决于Reducer的数量。哪个k,v pair进哪一个patition取决于key的hashCode。
-    5. **Shuffle阶段：** Shuffle是一个神奇的阶段，我认为他一部分属于Map端一部分属于Reduce端。Map端：在Map函数开始产生输出的时候并不是简单的将intermediate kv直接写入磁盘中，它会利用环形缓冲区的方式先写入到内存中进行分区和预排序。具体来说，每个Mapper都有一个属于自己的环形缓冲区，这个缓冲区默认大小为100MB，这个数值可以通过mapreduce.task.io.sort.mb设置，通常来说0.8是个阈值，如果缓冲区中的数据超过整体的0.8会发生溢写操作,之后后台会启动一个线程将这些数据spill到磁盘中。但是也并不是直接写入磁盘的，线程首先会根据Reducer的数量将数据进行分区，之后分区内排序，如果有combiner函数就要去执行，combiner会使得结果更加紧密，数据量更少。要注意的是多次溢写会导致产生多个文件，在任务完成前移除文件会被merge成一个分区的并且排好序的输出文件。当然写入磁盘之前也是可能进行数据压缩的，这也是个比较好的主意。Reduce端：map输出的文件会位于运行map task的tasktracker的本地磁盘上，map完全完成后，tasktracker需要运行Reduce任务去获取这些输出文件。这就是reduce任务的copy阶段，默认reduce有5个Copy线程，会轮询master来获取map的位置，知道map完成后通过心跳机制通知master后才可以获得位置并去copy数据。注意copy线程并会等待所有map task都完成后才去执行，而是能执行就执行。copy过来数据后，会进入merge阶段，这个阶段将合并map输出，维持其顺序排序。在最后的reduce阶段，对已排序的每个键都调用reduce函数，此阶段的输出会直接输入到HDFS。
+    **InputSplit：** 是mapreduce中数据的逻辑表示形式，每个inputsplit会对应一个mapper，由于mapreduce具有data locility优化方法，因此task tracker常常将mapper就近放在所用数据周围。这个会有一个贪心的策略，就是尽可能优先处理更大的inputSplit，即保持mapper和data在同一个Datanode上,以获得更高的性能。要注意的是inputsplit并不是真的保存了数据，他只是数据的引用。通常来说InputFormat会根据HDFS分块的大小来将inputFile分割为input split。
+    **RecordReader：** 会将inputSplit中的数据convert成便于mapper处理的k,v结构。关键函数有setup(contex),context.nextKeyValue()等，常用的RecordReader有LineRecordReader和SequenceFileRecordread。
+    **Partitioner:** partitions的数量取决于Reducer的数量。哪个k,v pair进哪一个patition取决于key的hashCode。
+    **Shuffle阶段：** Shuffle是一个神奇的阶段，我认为他一部分属于Map端一部分属于Reduce端。Map端：在Map函数开始产生输出的时候并不是简单的将intermediate kv直接写入磁盘中，它会利用环形缓冲区的方式先写入到内存中进行分区和预排序。具体来说，每个Mapper都有一个属于自己的环形缓冲区，这个缓冲区默认大小为100MB，这个数值可以通过mapreduce.task.io.sort.mb设置，通常来说0.8是个阈值，如果缓冲区中的数据超过整体的0.8会发生溢写操作,之后后台会启动一个线程将这些数据spill到磁盘中。但是也并不是直接写入磁盘的，线程首先会根据Reducer的数量将数据进行分区，之后分区内排序，如果有combiner函数就要去执行，combiner会使得结果更加紧密，数据量更少。要注意的是多次溢写会导致产生多个文件，在任务完成前移除文件会被merge成一个分区的并且排好序的输出文件。当然写入磁盘之前也是可能进行数据压缩的，这也是个比较好的主意。Reduce端：map输出的文件会位于运行map task的tasktracker的本地磁盘上，map完全完成后，tasktracker需要运行Reduce任务去获取这些输出文件。这就是reduce任务的copy阶段，默认reduce有5个Copy线程，会轮询master来获取map的位置，知道map完成后通过心跳机制通知master后才可以获得位置并去copy数据。注意copy线程并会等待所有map task都完成后才去执行，而是能执行就执行。copy过来数据后，会进入merge阶段，这个阶段将合并map输出，维持其顺序排序。在最后的reduce阶段，对已排序的每个键都调用reduce函数，此阶段的输出会直接输入到HDFS。
 3. **MapReduce调优**
     出现问题的原因(计算机性能上的因素：CPU，内存，磁盘健康，网络。IO操作优化：数据倾斜，map与reduce数量设置不合理，Map运行时间太长或太短，小文件太多，大量不可分块的超大文件，splill次数过多，merge次数过多)。  
 **优化方案：**
