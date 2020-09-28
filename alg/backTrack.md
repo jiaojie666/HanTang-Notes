@@ -45,28 +45,28 @@
 
 
 
-		vector<vector<int>> permute(vector<int>& nums)
-		    if(nums.empty())
-			return {};
-		    permute(nums,0);return res;
-		void permute(vector<int>&nums,int start)
-		    if(start>=nums.size())
-			res.push_back(nums);
-			return;
-		    for(int i=start;i<nums.size();i++)
-			swap(nums[start],nums[i]);
-			permute(nums,start+1);
-			swap(nums[start],nums[i]);
+			vector<vector<int>> permute(vector<int>& nums)
+			    if(nums.empty())
+				return {};
+			    permute(nums,0);return res;
+			void permute(vector<int>&nums,int start)
+			    if(start>=nums.size())
+				res.push_back(nums);
+				return;
+			    for(int i=start;i<nums.size();i++)
+				swap(nums[start],nums[i]);
+				permute(nums,start+1);
+				swap(nums[start],nums[i]);
 -	**全排列：有重复**
 
 
 
-		相比上面swap之前要加一个judge
-		bool judge(vector<int>&nums,int start,int end)
-		    for(int i=start;i<end;i++)
-			if(nums[i]==nums[end])
-			    return true;
-		return false;
+			相比上面swap之前要加一个judge
+			bool judge(vector<int>&nums,int start,int end)
+			    for(int i=start;i<end;i++)
+				if(nums[i]==nums[end])
+				    return true;
+			return false;
 
 
 
